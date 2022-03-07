@@ -17,7 +17,7 @@ cp .config linux/.config
 echo Building kernel ...
 cd /build/linux || exit
 
-make -j$(nproc) || exit
+make -j"$(nproc)" || exit
 mkdir /export
 find /build/linux -name bzImage -exec cp "{}" /export  \;
 
