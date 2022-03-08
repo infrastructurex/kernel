@@ -1,4 +1,4 @@
-# busybox
+# kernel
 Kernel build for [VMify](https://github.com/vmify/vmify) NanoOS
 
 ## License
