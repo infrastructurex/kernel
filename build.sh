@@ -16,8 +16,13 @@ cp .config linux/.config
 
 echo Building kernel ...
 cd /build/linux || exit
-
+ls -l
 make -j"$(nproc)" || exit
+
+if [ -f arch/arm64/boot/Image.gz ]; then
+  cp arch/arm64/boot/Image.gz bzImage
+fi
+
 mkdir /export
 find /build/linux -name bzImage -exec cp "{}" /export  \;
 
