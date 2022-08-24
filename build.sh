@@ -3,11 +3,11 @@
 CONFIG=/build/.config
 VERSION=$(grep '# Linux/' $CONFIG | cut -d ' ' -f 3)
 VERSION_MAJOR=$(echo "$VERSION" | cut -b 1 )
-
+SOURCE=https://cdn.kernel.org/pub/linux/kernel/v"$VERSION_MAJOR".x/linux-"$VERSION".tar.xz
 
 echo Downloading kernel "$VERSION" ...
 cd /build || exit
-wget https://cdn.kernel.org/pub/linux/kernel/v"$VERSION_MAJOR".x/linux-"$VERSION".tar.xz
+wget "$SOURCE"
 echo Extracting kernel "$VERSION" ...
 tar -xJf linux-"$VERSION".tar.xz
 mv linux-"$VERSION" linux
@@ -34,5 +34,9 @@ fi
 
 echo Packaging kernel ...
 cd /export || exit
+mv bzImage kernel
 cp /build/LICENSE .
+echo "Source  : $SOURCE" > /export/SOURCE
+echo "Version : $VERSION" >> /export/SOURCE
+echo "Package : https://github.com/vmify/kernel/releases/download/$TAG/kernel-$ARCH-$TAG.tar.gz" >> /export/SOURCE
 tar -czvf /kernel.tar.gz *
