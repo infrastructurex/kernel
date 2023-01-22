@@ -8,7 +8,7 @@ on:
       - 'Dockerfile'
 jobs:
   build:
-    runs-on: ubuntu-20.04-16core
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
