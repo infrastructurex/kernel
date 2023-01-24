@@ -18,9 +18,8 @@ echo Building kernel ...
 cd /build/linux || exit
 make -j"$(nproc)" || exit
 
-if [ -f arch/arm64/boot/Image ]; then
-  zstd arch/arm64/boot/Image
-  cp arch/arm64/boot/Image.zst bzImage
+if [ -f arch/arm64/boot/Image.gz ]; then
+  cp arch/arm64/boot/Image.gz bzImage
 fi
 
 mkdir /export
