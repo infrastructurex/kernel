@@ -1,5 +1,5 @@
 # kernel
-Kernel build for InfrastructureX
+Kernel build
 
 ## License
 Copyright 2024 InfrastructureX GmbH

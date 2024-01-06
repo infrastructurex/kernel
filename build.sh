@@ -42,5 +42,5 @@ mv bzImage kernel
 cp /build/LICENSE .
 echo "Source  : $SOURCE" > /export/SOURCE
 echo "Version : $VERSION" >> /export/SOURCE
-echo "Package : https://github.com/vmify/kernel/releases/download/$TAG/kernel-$ARCH0-$TAG.tar.gz" >> /export/SOURCE
+echo "Package : https://github.com/infrastructurex/kernel/releases/download/$TAG/kernel-$ARCH0-$TAG.tar.gz" >> /export/SOURCE
 tar -czvf /kernel.tar.gz *
