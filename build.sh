@@ -16,10 +16,14 @@ cp .config linux/.config
 
 echo Building kernel ...
 cd /build/linux || exit
+patch -p1 < ../efi-cmdline.patch
 make -j"$(nproc)" || exit
 
 if [ -f arch/arm64/boot/Image.gz ]; then
   cp arch/arm64/boot/Image.gz bzImage
+fi
+if [ -f arch/arm64/boot/vmlinuz.efi ]; then
+  cp arch/arm64/boot/vmlinuz.efi bzImage
 fi
 
 mkdir /export

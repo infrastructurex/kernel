@@ -1,0 +1,92 @@
+diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
+index bfa30625f..80acd08b7 100644
+--- a/drivers/firmware/efi/libstub/efi-stub-helper.c
++++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
+@@ -281,70 +281,16 @@ char *efi_convert_cmdline(efi_loaded_image_t *image, int *cmd_line_len)
+ {
+ 	const efi_char16_t *options = efi_table_attr(image, load_options);
+ 	u32 options_size = efi_table_attr(image, load_options_size);
+-	int options_bytes = 0, safe_options_bytes = 0;  /* UTF-8 bytes */
++	int options_bytes = 0;  /* UTF-8 bytes */
+ 	unsigned long cmdline_addr = 0;
+-	const efi_char16_t *s2;
+-	bool in_quote = false;
+ 	efi_status_t status;
+-	u32 options_chars;
+ 
+ 	if (options_size > 0)
+ 		efi_measure_tagged_event((unsigned long)options, options_size,
+ 					 EFISTUB_EVT_LOAD_OPTIONS);
+ 
+-	efi_apply_loadoptions_quirk((const void **)&options, &options_size);
+-	options_chars = options_size / sizeof(efi_char16_t);
+-
+-	if (options) {
+-		s2 = options;
+-		while (options_bytes < COMMAND_LINE_SIZE && options_chars--) {
+-			efi_char16_t c = *s2++;
+-
+-			if (c < 0x80) {
+-				if (c == L'\0' || c == L'\n')
+-					break;
+-				if (c == L'"')
+-					in_quote = !in_quote;
+-				else if (!in_quote && isspace((char)c))
+-					safe_options_bytes = options_bytes;
+-
+-				options_bytes++;
+-				continue;
+-			}
+-
+-			/*
+-			 * Get the number of UTF-8 bytes corresponding to a
+-			 * UTF-16 character.
+-			 * The first part handles everything in the BMP.
+-			 */
+-			options_bytes += 2 + (c >= 0x800);
+-			/*
+-			 * Add one more byte for valid surrogate pairs. Invalid
+-			 * surrogates will be replaced with 0xfffd and take up
+-			 * only 3 bytes.
+-			 */
+-			if ((c & 0xfc00) == 0xd800) {
+-				/*
+-				 * If the very last word is a high surrogate,
+-				 * we must ignore it since we can't access the
+-				 * low surrogate.
+-				 */
+-				if (!options_chars) {
+-					options_bytes -= 3;
+-				} else if ((*s2 & 0xfc00) == 0xdc00) {
+-					options_bytes++;
+-					options_chars--;
+-					s2++;
+-				}
+-			}
+-		}
+-		if (options_bytes >= COMMAND_LINE_SIZE) {
+-			options_bytes = safe_options_bytes;
+-			efi_err("Command line is too long: truncated to %d bytes\n",
+-				options_bytes);
+-		}
+-	}
+-
++	const char * cmdline = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
++	options_bytes = 1024;
+ 	options_bytes++;	/* NUL termination */
+ 
+ 	status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, options_bytes,
+@@ -352,8 +298,11 @@ char *efi_convert_cmdline(efi_loaded_image_t *image, int *cmd_line_len)
+ 	if (status != EFI_SUCCESS)
+ 		return NULL;
+ 
+-	snprintf((char *)cmdline_addr, options_bytes, "%.*ls",
+-		 options_bytes - 1, options);
++	int i;
++	for (i = 0; cmdline[i] != '\0'; i++) {
++		((char *)cmdline_addr)[i] = cmdline[i];
++	}
++	((char *)cmdline_addr)[i] = '\0';
+ 
+ 	*cmd_line_len = options_bytes;
+ 	return (char *)cmdline_addr;
