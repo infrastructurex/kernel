@@ -6,15 +6,19 @@ on:
       - 'build.sh'
       - '*.config'
       - 'Dockerfile'
+    branches:
+      - main
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: sprinters:aws/minimal/${{ matrix.instance-type }}
     strategy:
       matrix:
         include:
-          - arch: "x64"
+          - instance-type: "m7i.8xlarge"
+            arch: "x64"
             docker-arch: "amd64"
-          - arch: "arm64"
+          - instance-type: "t4g.2xlarge"
+            arch: "arm64"
             docker-arch: "arm64"
     steps:
       - uses: actions/checkout@v4
