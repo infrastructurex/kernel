@@ -10,7 +10,7 @@ on:
       - main
 jobs:
   build:
-    runs-on: sprinters:aws/minimal/${{ matrix.instance-type }}
+    runs-on: sprinters:aws/846680362832:minimal:${{ matrix.instance-type }}
     strategy:
       matrix:
         include:
