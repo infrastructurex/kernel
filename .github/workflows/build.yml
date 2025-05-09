@@ -10,14 +10,14 @@ on:
       - main
 jobs:
   build:
-    runs-on: sprinters:aws/846680362832:minimal:${{ matrix.instance-type }}
+    runs-on: sprinters:aws:minimal:${{ matrix.instance-type }}
     strategy:
       matrix:
         include:
           - instance-type: "m7i.8xlarge"
             arch: "x64"
             docker-arch: "amd64"
-          - instance-type: "t4g.2xlarge"
+          - instance-type: "m8g.8xlarge"
             arch: "arm64"
             docker-arch: "arm64"
     steps:
