@@ -10,7 +10,7 @@ on:
       - main
 jobs:
   build:
-    runs-on: sprinters:aws:minimal:${{ matrix.instance-type }}
+    runs-on: sprinters:aws:ubuntu-24.04-minimal:${{ matrix.instance-type }}:spot=auto
     strategy:
       matrix:
         include:
