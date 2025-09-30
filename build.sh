@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 CONFIG=/build/.config
-VERSION=$(grep '# Linux/' $CONFIG | cut -d ' ' -f 3)
+VERSION=$(grep '# Linux/' $CONFIG | cut -d ' ' -f 3 | sed "s/\.0//")
 VERSION_MAJOR=$(echo "$VERSION" | cut -b 1 )
 SOURCE=https://cdn.kernel.org/pub/linux/kernel/v"$VERSION_MAJOR".x/linux-"$VERSION".tar.xz
 
