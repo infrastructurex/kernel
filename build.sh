@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 CONFIG=/build/.config
-VERSION=$(grep '# Linux/' $CONFIG | cut -d ' ' -f 3 | sed "s/\.0//")
+VERSION=$(grep '# Linux/' $CONFIG | cut -d ' ' -f 3 | sed "s/\.0$//")
 VERSION_MAJOR=$(echo "$VERSION" | cut -b 1 )
 SOURCE=https://cdn.kernel.org/pub/linux/kernel/v"$VERSION_MAJOR".x/linux-"$VERSION".tar.xz
 
@@ -17,7 +17,8 @@ cp .config linux/.config
 echo Building kernel ...
 cd /build/linux || exit
 patch -p1 < ../efi-cmdline.patch
-make -j"$(nproc)" || exit
+# -Wno-unused-function workaround needed for 7.0.9 to compile cleanly
+make KCFLAGS="-Wno-unused-function" -j"$(nproc)" || exit
 
 if [ -f arch/arm64/boot/Image.gz ]; then
   cp arch/arm64/boot/Image.gz bzImage
